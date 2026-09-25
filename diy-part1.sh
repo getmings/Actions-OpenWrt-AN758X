@@ -151,6 +151,9 @@ if [ "$ADD_SMARTDNS" = "true" ]; then
   clone https://github.com/pymumu/smartdns "$PKG_DIR/smartdns" master
 fi
 
+# --- luci-app-zzzcatspeedtest ---
+clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
+
 # ---------------------------------------------------------
 # 校验：默认开启的两个插件必须拉到，否则 defconfig 会静默剔除，
 #       编出来的固件缺少状态页还不易察觉
