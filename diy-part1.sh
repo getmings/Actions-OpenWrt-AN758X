@@ -26,7 +26,7 @@ ADD_AIROHA_NPU=true    # luci-app-airoha-npu：Airoha SoC 状态页（NPU/CPU/Fr
 ADD_PASSWALL=false     # luci-app-passwall（含依赖源）
 ADD_OPENCLASH=false    # luci-app-openclash ⚠ 依赖 Ruby/Rust，编译极慢
 ADD_MOSDNS=false       # luci-app-mosdns + v2ray-geodata
-ADD_LUCKY=false        # luci-app-lucky（DDNS + socat）
+ADD_LUCKY=true        # luci-app-lucky（DDNS + socat）
 ADD_TAILSCALE=false    # luci-app-tailscale
 ADD_OPENLIST=false     # luci-app-openlist2（alist/openlist 挂载）
 ADD_SMARTDNS=false     # luci-app-smartdns
@@ -159,6 +159,16 @@ if [ "$ADD_SMARTDNS" = "true" ]; then
   clone https://github.com/pymumu/luci-app-smartdns "$PKG_DIR/luci-app-smartdns" master
   clone https://github.com/pymumu/smartdns "$PKG_DIR/smartdns" master
 fi
+
+# --- luci-app-zzzcatspeedtest ---
+clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
+
+# --- VPN easytier  ---
+clone https://github.com/EasyTier/luci-app-easytier "$PKG_DIR/luci-app-easytier"
+
+# --- 主题 aurora ---
+clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora"
+clone https://github.com/eamonxg/luci-app-aurora-config "$PKG_DIR/luci-app-aurora-config"
 
 # ---------------------------------------------------------
 # 校验：默认开启的两个插件必须拉到，否则 defconfig 会静默剔除，
