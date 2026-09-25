@@ -160,6 +160,13 @@ if [ "$ADD_SMARTDNS" = "true" ]; then
   clone https://github.com/pymumu/smartdns "$PKG_DIR/smartdns" master
 fi
 
+# --- sing-box luci-app-homeproxy ---
+# -先删除自带
+rm -rf $(find "${GITHUB_WORKSPACE}/luci/" "${GITHUB_WORKSPACE}/packages/" -type d -regex ".*\(sing-box\|luci-app-homeproxy\).*")
+# -然后拉取
+clone https://github.com/VIKINGYFY/packages "$PKG_DIR/VIKINGYFY-app" main
+
+
 # --- luci-app-zzzcatspeedtest ---
 clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
 
