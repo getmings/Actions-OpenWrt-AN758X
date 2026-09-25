@@ -166,6 +166,9 @@ clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-
 # --- luci-app-quickfile 文件管理器---
 clone https://github.com/sbwml/luci-app-quickfile "$PKG_DIR/luci-app-quickfile"
 
+# --- luci-app-mesh 组网  ---
+clone https://gitee.com/dffxy/luci-app-mesh "$PKG_DIR/luci-app-mesh"
+
 # --- VPN easytier  ---
 clone https://github.com/EasyTier/luci-app-easytier "$PKG_DIR/luci-app-easytier"
 
