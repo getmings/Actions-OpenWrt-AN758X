@@ -160,6 +160,32 @@ if [ "$ADD_SMARTDNS" = "true" ]; then
   clone https://github.com/pymumu/smartdns "$PKG_DIR/smartdns" master
 fi
 
+# --- sing-box luci-app-homeproxy ---
+# -先删除自带
+rm -rf $(find ./luci/ ./packages/ -type d -regex ".*\(sing-box\|luci-app-homeproxy\).*")
+# -然后拉取
+clone https://github.com/VIKINGYFY/packages "$PKG_DIR/VIKINGYFY-app" main
+
+
+# --- luci-app-zzzcatspeedtest ---
+clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
+
+# --- luci-app-quickfile 文件管理器---
+clone https://github.com/sbwml/luci-app-quickfile "$PKG_DIR/luci-app-quickfile"
+
+# --- luci-app-mesh 组网  ---
+clone https://gitee.com/dffxy/luci-app-mesh "$PKG_DIR/luci-app-mesh"
+
+# --- VPN easytier  ---
+clone https://github.com/EasyTier/luci-app-easytier "$PKG_DIR/luci-app-easytier"
+
+# --- 主题 aurora ---
+clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora"
+clone https://github.com/eamonxg/luci-app-aurora-config "$PKG_DIR/luci-app-aurora-config"
+
+# --- luci-theme-shadcn ---
+clone https://github.com/eamonxg/luci-theme-shadcn "$PKG_DIR/luci-theme-shadcn"
+
 # ---------------------------------------------------------
 # 校验：默认开启的两个插件必须拉到，否则 defconfig 会静默剔除，
 #       编出来的固件缺少状态页还不易察觉
