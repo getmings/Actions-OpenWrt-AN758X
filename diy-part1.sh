@@ -162,7 +162,9 @@ fi
 
 # --- sing-box luci-app-homeproxy ---
 # -先删除自带
-rm -rf $(find ./luci/ ./packages/ -type d -regex ".*\(sing-box\|luci-app-homeproxy\).*")
+ls
+ls feeds
+rm -rf $(find ./feeds/luci/ ./feeds/packages/ -type d -regex ".*\(sing-box\|luci-app-homeproxy\).*")
 # -然后拉取
 clone https://github.com/VIKINGYFY/packages "$PKG_DIR/VIKINGYFY-app" main
 
