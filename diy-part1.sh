@@ -206,32 +206,7 @@ fi
 # custom feed 的索引，导致 package/feeds/custom 压根不生成，
 # 所有包符号都不存在。
 # ---------------------------------------------------------
-echo "--- 检查重复嵌套目录 ---"
-echo "--- 检查嵌套/多包目录 ---"
-for d in "$PKG_DIR"/*; do
-  [ -d "$d" ] || continue
-  n=$(basename "$d")
 
-  # 单包嵌套：luci-app-lucky/luci-app-lucky
-  if [ -f "$d/$n/Makefile" ]; then
-    mv "$d/$n"/* "$d/"
-    rmdir "$d/$n"
-    echo "✅ 展开: $n/$n"
-    continue
-  fi
-
-  # 多包仓库：VIKINGYFY-app/sing-box、luci-app-homeproxy
-  if [ ! -f "$d/Makefile" ]; then
-    for sub in "$d"/*; do
-      [ -f "$sub/Makefile" ] || continue
-      name=$(basename "$sub")
-      rm -rf "$PKG_DIR/$name"
-      mv "$sub" "$PKG_DIR/$name"
-      echo "✅ 提取: $name"
-    done
-    rmdir "$d" 2>/dev/null
-  fi
-done
 
 # ---------------------------------------------------------
 # 让新包进入索引
