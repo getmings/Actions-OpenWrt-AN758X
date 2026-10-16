@@ -253,7 +253,7 @@ jobs:
               # 替换 configs 目录下所有 .config 中的 PON LuCI 包名（不只当前机型）。
               CONFIG_COUNT=0
               while IFS= read -r -d '' cfg; do
-                sed -i -e 's/^CONFIG_PACKAGE_luci-app-pon=y$/CONFIG_PACKAGE_luci-app-onu=y/' -e 's/^CONFIG_PACKAGE_luci-i18n-pon-zh-cn=y$/CONFIG_PACKAGE_luci-i18n-onu-zh-cn=y/' "$cfg"
+                sed -i -E -e 's/^CONFIG_PACKAGE_luci-app-pon=y.*/CONFIG_PACKAGE_luci-app-onu=y/' -e 's/^CONFIG_PACKAGE_luci-i18n-pon-zh-cn=y.*/CONFIG_PACKAGE_luci-i18n-onu-zh-cn=y/' -e '/^CONFIG_PACKAGE_luci-app-iptv=y([[:space:]]|$)/d' -e '/^CONFIG_PACKAGE_luci-i18n-iptv-zh-cn=y([[:space:]]|$)/d' "$cfg"
                 CONFIG_COUNT=$((CONFIG_COUNT + 1))
               done < <(find "$GITHUB_WORKSPACE/configs" -type f -name '*.config' -print0)
 
@@ -266,7 +266,6 @@ jobs:
               exit 1
               ;;
           esac
-          cat "$GITHUB_WORKSPACE/configs/fiberhome_hg5585f-ct.config"
 
           # 输入项为空时回退到 workflow 级默认值，确保 diy-part2.sh 拿到的
           # 始终是确定值，而不是空串（空串会让 LuCI 概览页显示 "·  ·"）。
@@ -335,7 +334,6 @@ jobs:
           # =========================================================
           if [ -f "configs/${SOC}.config" ]; then
             cp "configs/${SOC}.config" .config
-            cat "configs/${SOC}.config"
             echo "✅ 已用源码基座 defconfig 打底: configs/${SOC}.config"
           else
             : > .config
@@ -345,11 +343,9 @@ jobs:
           # 再追加工型精简配置（其中的 =y / is not set 会覆盖基座）
           if [ -e "$GITHUB_WORKSPACE/${CONFIG_FILE}" ]; then
             cat "$GITHUB_WORKSPACE/${CONFIG_FILE}" >> .config
-            cat "$GITHUB_WORKSPACE/${CONFIG_FILE}"
             echo "✅ 已追加机型配置: ${CONFIG_FILE}"
           elif [ -e "$GITHUB_WORKSPACE/configs/${SOC}.config" ]; then
             cat "$GITHUB_WORKSPACE/configs/${SOC}.config" >> .config
-            cat "$GITHUB_WORKSPACE/configs/${SOC}.config"
             echo "✅ 已追加 SoC 通用配置"
           else
             echo "::error::找不到机型配置 ${CONFIG_FILE}"
@@ -400,28 +396,12 @@ jobs:
           cd "$BUILD_ROOT/openwrt"
 
 
-          echo "===== Feed 安装结果 ====="
-          ls -ld package/feeds/pon_userspace/luci-app-onu
-          ls -l package/feeds/pon_userspace/luci-app-onu/po/zh_Hans/onu.po
-
-          echo "===== Kconfig 配置定义（defconfig 前） ====="
-          grep -R -n -E 'PACKAGE_luci-app-onu|PACKAGE_luci-i18n-onu-zh-cn' tmp/.config-package.in tmp/.config-feeds.in 2>/dev/null || true
-
-          echo "===== .config（defconfig 前） ====="
-          grep -n -E 'CONFIG_PACKAGE_luci-app-onu|CONFIG_PACKAGE_luci-i18n-onu-zh-cn|CONFIG_PACKAGE_luci-app-pon|CONFIG_PACKAGE_luci-i18n-pon-zh-cn' .config || true
-
           echo "===== make defconfig ====="
           make defconfig -j$(nproc) && make clean -j$(nproc)
 
           echo "===== .config（defconfig 后） ====="
           grep -n -E 'CONFIG_PACKAGE_luci-app-onu|CONFIG_PACKAGE_luci-i18n-onu-zh-cn|CONFIG_PACKAGE_luci-app-pon|CONFIG_PACKAGE_luci-i18n-pon-zh-cn' .config || true
 
-          echo "===== Kconfig 配置定义（defconfig 后） ====="
-          grep -R -n -E 'PACKAGE_luci-app-onu|PACKAGE_luci-i18n-onu-zh-cn' tmp/.config-package.in tmp/.config-feeds.in 2>/dev/null || true
-
-          echo "===== 开始查看config ====="
-          cat .config
-          echo "===== 结束查看config ====="
           # =========================================================
           # 关键包校验：defconfig 会把 feeds 里不存在的包静默剔除，
           # 这里显式确认 PON 核心链路还在，否则编出来光口不通
