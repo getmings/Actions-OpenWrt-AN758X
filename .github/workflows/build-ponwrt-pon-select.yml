@@ -266,6 +266,7 @@ jobs:
               exit 1
               ;;
           esac
+          cat $GITHUB_WORKSPACE/configs/fiberhome_hg5585f-ct.config"
 
           # 输入项为空时回退到 workflow 级默认值，确保 diy-part2.sh 拿到的
           # 始终是确定值，而不是空串（空串会让 LuCI 概览页显示 "·  ·"）。
