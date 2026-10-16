@@ -352,6 +352,8 @@ jobs:
             echo "::error::找不到机型配置 ${CONFIG_FILE}"
             exit 1
           fi
+          
+          cat .config
 
       # =========================================================
       # 7. 按机型裁剪: 只保留一个 TARGET_DEVICE
@@ -407,7 +409,7 @@ jobs:
           grep -n -E 'CONFIG_PACKAGE_luci-app-onu|CONFIG_PACKAGE_luci-i18n-onu-zh-cn|CONFIG_PACKAGE_luci-app-pon|CONFIG_PACKAGE_luci-i18n-pon-zh-cn' .config || true
 
           echo "===== make defconfig ====="
-          make defconfig
+          make defconfig -j$(nproc) && make clean -j$(nproc)
 
           echo "===== .config（defconfig 后） ====="
           grep -n -E 'CONFIG_PACKAGE_luci-app-onu|CONFIG_PACKAGE_luci-i18n-onu-zh-cn|CONFIG_PACKAGE_luci-app-pon|CONFIG_PACKAGE_luci-i18n-pon-zh-cn' .config || true
@@ -415,6 +417,9 @@ jobs:
           echo "===== Kconfig 配置定义（defconfig 后） ====="
           grep -R -n -E 'PACKAGE_luci-app-onu|PACKAGE_luci-i18n-onu-zh-cn' tmp/.config-package.in tmp/.config-feeds.in 2>/dev/null || true
 
+          echo "===== 开始查看config ====="
+          cat .config
+          echo "===== 结束查看config ====="
           # =========================================================
           # 关键包校验：defconfig 会把 feeds 里不存在的包静默剔除，
           # 这里显式确认 PON 核心链路还在，否则编出来光口不通
