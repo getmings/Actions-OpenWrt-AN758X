@@ -249,7 +249,6 @@ jobs:
                 exit 1
               fi
               sed -i -E 's|^src-git([[:space:]]+)pon_userspace([[:space:]]+).*|src-git\1pon_userspace\2https://github.com/naoki66/OpenWrt_ONU_CONFIG.git|' "$FEEDS_FILE"
-              cat "$FEEDS_FILE"
 
               # 替换 configs 目录下所有 .config 中的 PON LuCI 包名（不只当前机型）。
               CONFIG_COUNT=0
@@ -335,6 +334,7 @@ jobs:
           # =========================================================
           if [ -f "configs/${SOC}.config" ]; then
             cp "configs/${SOC}.config" .config
+            cat "configs/${SOC}.config"
             echo "✅ 已用源码基座 defconfig 打底: configs/${SOC}.config"
           else
             : > .config
@@ -344,16 +344,17 @@ jobs:
           # 再追加工型精简配置（其中的 =y / is not set 会覆盖基座）
           if [ -e "$GITHUB_WORKSPACE/${CONFIG_FILE}" ]; then
             cat "$GITHUB_WORKSPACE/${CONFIG_FILE}" >> .config
+            cat "$GITHUB_WORKSPACE/${CONFIG_FILE}"
             echo "✅ 已追加机型配置: ${CONFIG_FILE}"
           elif [ -e "$GITHUB_WORKSPACE/configs/${SOC}.config" ]; then
             cat "$GITHUB_WORKSPACE/configs/${SOC}.config" >> .config
+            cat "$GITHUB_WORKSPACE/configs/${SOC}.config"
             echo "✅ 已追加 SoC 通用配置"
           else
             echo "::error::找不到机型配置 ${CONFIG_FILE}"
             exit 1
           fi
           
-          cat .config
 
       # =========================================================
       # 7. 按机型裁剪: 只保留一个 TARGET_DEVICE
