@@ -253,10 +253,7 @@ jobs:
               # 替换 configs 目录下所有 .config 中的 PON LuCI 包名（不只当前机型）。
               CONFIG_COUNT=0
               while IFS= read -r -d '' cfg; do
-                sed -i \\
-                  -e 's/^CONFIG_PACKAGE_luci-app-pon=y$/CONFIG_PACKAGE_luci-app-onu=y/' \\
-                  -e 's/^CONFIG_PACKAGE_luci-i18n-pon-zh-cn=y$/CONFIG_PACKAGE_luci-i18n-onu-zh-cn=y/' \\
-                  "$cfg"
+                sed -i -e 's/^CONFIG_PACKAGE_luci-app-pon=y$/CONFIG_PACKAGE_luci-app-onu=y/' -e 's/^CONFIG_PACKAGE_luci-i18n-pon-zh-cn=y$/CONFIG_PACKAGE_luci-i18n-onu-zh-cn=y/' "$cfg"
                 CONFIG_COUNT=$((CONFIG_COUNT + 1))
               done < <(find "$GITHUB_WORKSPACE/configs" -type f -name '*.config' -print0)
 
