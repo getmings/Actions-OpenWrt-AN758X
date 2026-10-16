@@ -212,6 +212,9 @@ clone https://github.com/breeze303/openwrt-honk "$PKG_DIR/openwrt-honk" main
 # --- luci-app-zzzcatspeedtest ---
 clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
 
+# --- luciapp仓库 luci-app-homebox ---
+clone https://github.com/getmings/luciapp "$PKG_DIR/luciapp" main
+
 # --- luci-app-quickfile 文件管理器---
 clone https://github.com/sbwml/luci-app-quickfile "$PKG_DIR/luci-app-quickfile"
 
