@@ -249,6 +249,7 @@ jobs:
                 exit 1
               fi
               sed -i -E 's|^src-git([[:space:]]+)pon_userspace([[:space:]]+).*|src-git\1pon_userspace\2https://github.com/naoki66/OpenWrt_ONU_CONFIG.git|' "$FEEDS_FILE"
+              cat "$FEEDS_FILE"
 
               # 替换 configs 目录下所有 .config 中的 PON LuCI 包名（不只当前机型）。
               CONFIG_COUNT=0
@@ -394,9 +395,25 @@ jobs:
         run: |
           cd "$BUILD_ROOT/openwrt"
 
-          # diffconfig(精简配置) 必须 defconfig 展开；保留末尾输出便于排查
+
+          echo "===== Feed 安装结果 ====="
+          ls -ld package/feeds/pon_userspace/luci-app-onu
+          ls -l package/feeds/pon_userspace/luci-app-onu/po/zh_Hans/onu.po
+
+          echo "===== Kconfig 配置定义（defconfig 前） ====="
+          grep -R -n -E 'PACKAGE_luci-app-onu|PACKAGE_luci-i18n-onu-zh-cn' tmp/.config-package.in tmp/.config-feeds.in 2>/dev/null || true
+
+          echo "===== .config（defconfig 前） ====="
+          grep -n -E 'CONFIG_PACKAGE_luci-app-onu|CONFIG_PACKAGE_luci-i18n-onu-zh-cn|CONFIG_PACKAGE_luci-app-pon|CONFIG_PACKAGE_luci-i18n-pon-zh-cn' .config || true
+
           echo "===== make defconfig ====="
-          make defconfig 2>&1 | tail -5
+          make defconfig
+
+          echo "===== .config（defconfig 后） ====="
+          grep -n -E 'CONFIG_PACKAGE_luci-app-onu|CONFIG_PACKAGE_luci-i18n-onu-zh-cn|CONFIG_PACKAGE_luci-app-pon|CONFIG_PACKAGE_luci-i18n-pon-zh-cn' .config || true
+
+          echo "===== Kconfig 配置定义（defconfig 后） ====="
+          grep -R -n -E 'PACKAGE_luci-app-onu|PACKAGE_luci-i18n-onu-zh-cn' tmp/.config-package.in tmp/.config-feeds.in 2>/dev/null || true
 
           # =========================================================
           # 关键包校验：defconfig 会把 feeds 里不存在的包静默剔除，
