@@ -396,7 +396,7 @@ jobs:
 
           # diffconfig(精简配置) 必须 defconfig 展开；保留末尾输出便于排查
           echo "===== make defconfig ====="
-          make defconfig 2>&1 | tail -5 && make clean -j$(nproc)
+          make defconfig 2>&1 | tail -5
 
           # =========================================================
           # 关键包校验：defconfig 会把 feeds 里不存在的包静默剔除，
@@ -747,6 +747,7 @@ jobs:
         if: env.BUILD_SCOPE != 'toolchain-only'
         run: |
           cd "$BUILD_ROOT/openwrt"
+          make clean -j$(nproc)
           # 可用内存(MiB) / 2GiB 每 job，下限 1、上限 nproc
           JOBS=$(awk -v p="$(nproc)" '/^MemAvailable:/{m=int($2/2097152)+1} END{print m<p?m:p}' /proc/meminfo)
           JOBS=$(( JOBS < 1 ? 1 : JOBS ))
