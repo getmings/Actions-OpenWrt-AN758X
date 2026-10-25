@@ -1109,6 +1109,15 @@ jobs:
           echo "dl 目录共 $(ls -1 dl 2>/dev/null | wc -l) 个文件"
 
       # =========================================================
+      # 17.2 删除导致sing-box失败的缓存
+      # =========================================================
+      - name: Clean Go module cache
+        run: |
+          rm -rf "$BUILD_ROOT/openwrt/dl/go-mod-cache"
+          rm -rf "$BUILD_ROOT/openwrt/tmp/go-build"
+          rm -rf "$BUILD_ROOT"/openwrt/build_dir/target-aarch64_cortex-a53_musl/sing-box-*
+
+      # =========================================================
       # 18. 编译固件
       #     并发数按可用内存动态计算：每个 cc1 约 1.5-2G RSS，
       #     4 核 16G runner 上 -j8 易触发 OOM-killer 杀 cc1。
