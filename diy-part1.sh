@@ -349,6 +349,12 @@ clone https://github.com/VIKINGYFY/packages "$PKG_DIR/VIKINGYFY-app" main
 # --- honk luci-app-honk ---
 clone https://github.com/breeze303/openwrt-honk "$PKG_DIR/openwrt-honk" main
 
+# --- luci-app-nikki-rs  ---
+clone https://github.com/CHKayanami/OpenWrt-nikki-rs "$PKG_DIR/OpenWrt-nikki-rs" main
+
+# --- luci-app-nikki ---
+clone https://github.com/nikkinikki-org/OpenWrt-nikki "$PKG_DIR/OpenWrt-nikki" main
+
 # --- luci-app-zzzcatspeedtest ---
 clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
 
