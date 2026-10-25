@@ -29,11 +29,11 @@ ADD_LUCKY=false        # luci-app-lucky（DDNS + socat）
 ADD_TAILSCALE=false    # luci-app-tailscale
 ADD_OPENLIST=false     # luci-app-openlist2（alist/openlist 挂载）
 ADD_SMARTDNS=false     # luci-app-smartdns
-ADD_EASYTIER=false     # luci-app-easytier（另需 kmod-tun + easytier 本体，Rust 编译较慢）
+ADD_EASYTIER=true     # luci-app-easytier（另需 kmod-tun + easytier 本体，Rust 编译较慢）
 ADD_POWEROFF=false     # luci-app-poweroffdevice（关机）
-ADD_OWQ_WOL=false      # luci-app-owq-wol（网络唤醒，依赖 etherwake）
+ADD_OWQ_WOL=true      # luci-app-owq-wol（网络唤醒，依赖 etherwake）
 ADD_WATCHDOG=false     # luci-app-watchdog（看门狗，包在子目录，需特殊处理）
-ADD_TASKPLAN=false     # luci-app-taskplan（定时任务）
+ADD_TASKPLAN=true     # luci-app-taskplan（定时任务）
 ADD_OAF=false          # luci-app-oaf（应用过滤，含内核模块，高风险）
 ADD_LUCI_APP=true       # qwe-qaq/luci-app 仓库（monorepo）
                         #   ├─ luci-app-natmode     NAT 类型三选一（网络 → NAT 类型）
@@ -339,6 +339,48 @@ for p in luci-app-natmode luci-app-pon-status; do
     exit 1
   fi
 done
+
+# --- sing-box luci-app-homeproxy ---
+# -先删除自带
+rm -rf $(find ./feeds/luci/ ./feeds/packages/ -type d -regex ".*\(sing-box\|luci-app-homeproxy\).*")
+# -然后拉取
+clone https://github.com/VIKINGYFY/packages "$PKG_DIR/VIKINGYFY-app" main
+
+# --- honk luci-app-honk ---
+clone https://github.com/breeze303/openwrt-honk "$PKG_DIR/openwrt-honk" main
+
+# --- luci-app-zzzcatspeedtest ---
+clone https://github.com/Yuzhii0718/luci-app-zzzcatspeedtest "$PKG_DIR/luci-app-zzzcatspeedtest" main
+
+# --- luciapp仓库 luci-app-homebox luci-app-timecontrol ---
+clone https://github.com/getmings/luciapp "$PKG_DIR/luciapp" main
+
+# --- luci-app-quickfile 文件管理器---
+clone https://github.com/sbwml/luci-app-quickfile "$PKG_DIR/luci-app-quickfile"
+
+# --- luci-app-watchdog 路由安全看门狗---
+# clone https://github.com/sirpdboy/luci-app-watchdog "$PKG_DIR/luci-app-watchdog"
+
+# --- luci-app-mesh 组网  ---
+# #取消 clone https://gitee.com/dffxy/luci-app-mesh "$PKG_DIR/luci-app-mesh"
+clone https://github.com/xxosdev/luci-app-mesh "$PKG_DIR/luci-app-mesh"
+
+# --- luci-app-mini-diskmanager 简易磁盘管理---
+clone https://github.com/4IceG/luci-app-mini-diskmanager "$PKG_DIR/luci-app-mini-diskmanager"
+
+# --- VPN easytier  ---
+# clone https://github.com/EasyTier/luci-app-easytier "$PKG_DIR/luci-app-easytier"
+
+# --- 主题 aurora ---
+clone https://github.com/eamonxg/luci-theme-aurora "$PKG_DIR/luci-theme-aurora"
+clone https://github.com/eamonxg/luci-app-aurora-config "$PKG_DIR/luci-app-aurora-config"
+
+# --- luci-theme-shadcn ---
+clone https://github.com/eamonxg/luci-theme-shadcn "$PKG_DIR/luci-theme-shadcn"
+
+# --- luci-theme-vantage ---
+clone https://github.com/anothaDev/luci-theme-vantage "$PKG_DIR/luci-theme-vantage"
+
 # ---------------------------------------------------------
 # 补回 libffi —— python3(3.14) 的 _ctypes 硬性需要
 #
@@ -402,15 +444,32 @@ fi
 # custom feed 的索引，导致 package/feeds/custom 压根不生成，
 # 所有包符号都不存在。
 # ---------------------------------------------------------
-echo "--- 检查重复嵌套目录 ---"
+echo "--- 检查嵌套/多包目录 ---"
 for d in "$PKG_DIR"/*; do
   [ -d "$d" ] || continue
   n=$(basename "$d")
-  if [ -d "$d/$n" ] && [ -f "$d/$n/Makefile" ]; then
-    rm -rf "$d/$n"
-    echo "✅ 已移除重复嵌套目录: $n/$n"
+
+  # 单包嵌套：luci-app-lucky/luci-app-lucky
+  if [ -f "$d/$n/Makefile" ]; then
+    mv "$d/$n"/* "$d/"
+    rmdir "$d/$n"
+    echo "✅ 展开: $n/$n"
+    continue
+  fi
+
+  # 多包仓库：VIKINGYFY-app/sing-box、luci-app-homeproxy
+  if [ ! -f "$d/Makefile" ]; then
+    for sub in "$d"/*; do
+      [ -f "$sub/Makefile" ] || continue
+      name=$(basename "$sub")
+      rm -rf "$PKG_DIR/$name"
+      mv "$sub" "$PKG_DIR/$name"
+      echo "✅ 提取: $name"
+    done
+    rmdir "$d" 2>/dev/null
   fi
 done
+
 # ---------------------------------------------------------
 # 让新包进入索引
 #
