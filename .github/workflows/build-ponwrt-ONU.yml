@@ -1113,8 +1113,8 @@ jobs:
       # =========================================================
       - name: Clean Go module cache
         run: |
-          rm -rf "$BUILD_ROOT/openwrt/dl/go-mod-cache"
-          rm -rf "$BUILD_ROOT/openwrt/tmp/go-build"
+          # rm -rf "$BUILD_ROOT/openwrt/dl/go-mod-cache"
+          # rm -rf "$BUILD_ROOT/openwrt/tmp/go-build"
           rm -rf "$BUILD_ROOT"/openwrt/build_dir/target-aarch64_cortex-a53_musl/sing-box-*
 
       # =========================================================
