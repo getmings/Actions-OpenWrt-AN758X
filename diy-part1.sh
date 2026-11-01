@@ -374,6 +374,13 @@ clone https://github.com/xxosdev/luci-app-mesh "$PKG_DIR/luci-app-mesh"
 # --- luci-app-mini-diskmanager 简易磁盘管理---
 clone https://github.com/4IceG/luci-app-mini-diskmanager "$PKG_DIR/luci-app-mini-diskmanager"
 
+# --- luci-app-rtp2httpd   IPTV 流媒体转发服务器---
+# -先删除自带
+rm -rf $(find ./feeds/luci/ ./feeds/packages/ -type d -regex ".*\(rtp2httpd\|luci-app-rtp2httpd\).*")
+clone https://github.com/stackia/rtp2httpd "$PKG_DIR/app-rtp2httpd"
+# 只保留 openwrt-support 目录
+find "$PKG_DIR/app-rtp2httpd" -mindepth 1 -maxdepth 1 ! -name openwrt-support -exec rm -rf {} +
+
 # --- VPN easytier  ---
 # clone https://github.com/EasyTier/luci-app-easytier "$PKG_DIR/luci-app-easytier"
 
