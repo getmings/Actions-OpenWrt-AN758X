@@ -378,14 +378,7 @@ clone https://github.com/4IceG/luci-app-mini-diskmanager "$PKG_DIR/luci-app-mini
 # 先删除自带
 rm -rf $(find ./feeds/luci/ ./feeds/packages/ -type d -regex ".*\(rtp2httpd\|luci-app-rtp2httpd\).*")
 # 拉取源码
-clone https://github.com/stackia/rtp2httpd "$PKG_DIR/luci-app-rtp2httpd"
-# 创建 app-rtp2httpd 目录
-mkdir -p "$PKG_DIR/app-rtp2httpd"
-# 移动两个目录到app-rtp2httpd下
-mv "$PKG_DIR/luci-app-rtp2httpd/openwrt-support/luci-app-rtp2httpd" "$PKG_DIR/app-rtp2httpd/"
-mv "$PKG_DIR/luci-app-rtp2httpd/openwrt-support/rtp2httpd" "$PKG_DIR/app-rtp2httpd/"
-# 删除拉取的源码目录
-rm -rf "$PKG_DIR/luci-app-rtp2httpd"
+clone https://github.com/stackia/rtp2httpd "$PKG_DIR/app-rtp2httpd"
 
 # --- VPN easytier  ---
 # clone https://github.com/EasyTier/luci-app-easytier "$PKG_DIR/luci-app-easytier"
