@@ -142,6 +142,23 @@ on:
           - '0'
           - '1'
 
+      mbi_fix:
+        description: '应用 airoha-xpon 补丁：MBI RX 溢出复位（上游 issue #49，修 PPPoE 掉线后不恢复）'
+        required: false
+        default: 'yes'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+      sram_fix:
+        description: '应用 airoha-kernel 补丁：947 SRAM 拥塞剖面（上游 PR #64 draft，修 lan2/lan3 卡 500M）'
+        required: false
+        default: 'yes'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+
       scope:
         description: '构建范围 (toolchain-only 仅预热工具链缓存)'
         required: true
@@ -631,6 +648,31 @@ jobs:
           fi
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+
+      # =========================================================
+      # 4.5 Airoha 补丁（必须在 feeds install 之后）
+      #   - airoha-xpon 驱动在 pon_drivers feed 里，feeds update 后才存在
+      #   - 内核补丁复制到 target/linux/airoha/patches-6.18
+      #   开关：mbi_fix / sram_fix（手动运行时选 no 关闭；push/dispatch 默认开）
+      #   ⚠ 这里用 'no'/'yes' 而不是 '0'/'1'：GitHub 表达式里 '0' 会被当假值，
+      #     `x && '0' || '1'` 永远返回 '1'，开关会失效。
+      # =========================================================
+      - name: Apply Airoha patches (xpon MBI fix / kernel SRAM fix)
+        env:
+          WITH_MBI_FIX: ${{ github.event.inputs.mbi_fix == 'no' && 'no' || 'yes' }}
+          WITH_SRAM_FIX: ${{ github.event.inputs.sram_fix == 'no' && 'no' || 'yes' }}
+        run: |
+          cd "$BUILD_ROOT/openwrt"
+          if [ "$WITH_MBI_FIX" = "yes" ]; then
+            bash "$GITHUB_WORKSPACE/scripts/apply-pon-driver-patches.sh"
+          else
+            echo "mbi_fix=no: 跳过 airoha-xpon 补丁"
+          fi
+          if [ "$WITH_SRAM_FIX" = "yes" ]; then
+            bash "$GITHUB_WORKSPACE/scripts/apply-airoha-kernel-patches.sh"
+          else
+            echo "sram_fix=no: 跳过 airoha-kernel 补丁"
+          fi
 
       # =========================================================
       # 5. diy-part1.sh —— 拉取可选插件
